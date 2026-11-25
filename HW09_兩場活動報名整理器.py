@@ -1,0 +1,206 @@
+# ==============================================================================
+# HW09｜Python 資料型別上機實作：兩場活動報名整理器
+# 姓名：[請填寫你的姓名]
+# 學號：[請填寫你的學號]
+# 說明：使用字串方法與 list、tuple、dict、set 整理兩場活動名單並計算應收費用。
+# ==============================================================================
+
+# ==============================================================================
+# 【測試一：原始資料】
+# ==============================================================================
+print("==================== 【測試一：原始資料】 ====================")
+
+# 1. 原始資料設定
+# 固定的兩個活動名稱，以 tuple 保存 (不可變序列)
+activity_names = ("桌遊體驗", "電影欣賞")
+
+# 收到的原始文字名單，保留原值不覆蓋
+board_raw = " Amy, Ben, amy, Cora "
+movie_raw = " ben, Dora, ERIC, ben "
+
+# 用活動名稱查詢每人費用，以 dict 保存 (鍵值對查詢)
+unit_fees = {"桌遊體驗": 120, "電影欣賞": 80}
+
+# 2. 讀取活動名稱，建立兩份整理後的串列 (list)
+# 使用 tuple 拆包取得兩個活動名稱
+board_name, movie_name = activity_names
+
+# 移除半形空白、轉成小寫，再依逗號拆成 list (保留原本順序與重複項目)
+board_list = board_raw.replace(" ", "").lower().split(",")
+movie_list = movie_raw.replace(" ", "").lower().split(",")
+
+# 3. 使用集合 (set) 去重並進行名單比較
+board_set = set(board_list)  # 桌遊去重集合
+movie_set = set(movie_list)  # 電影去重集合
+
+both_set = board_set & movie_set          # 交集：兩場都有參加的共同參加者
+all_set = board_set | movie_set           # 聯集：至少參加一場的全部參加者
+only_board_set = board_set - movie_set    # 差集：只參加桌遊者 (桌遊有、電影沒有)
+only_movie_set = movie_set - board_set    # 差集：只參加電影者 (電影有、桌遊沒有)
+
+# 4. 建立排序串列，並使用切片取得前兩位通知名單預覽
+all_sorted = sorted(all_set)              # 依英文字母順序排序的完整名單
+preview_list = all_sorted[:2]             # 切片取得前兩位作為通知預覽
+
+# 5. 使用字典 (dict) 保存摘要數據，計算人數與應收費用
+summary = {
+    "桌遊人數": len(board_set),
+    "電影人數": len(movie_set),
+    "共同人數": len(both_set),
+    "總不重複人數": len(all_set),
+    "報名人次": len(board_set) + len(movie_set),
+    "桌遊應收": len(board_set) * unit_fees[board_name],
+    "電影應收": len(movie_set) * unit_fees[movie_name],
+}
+# 計算總應收並存入 summary 字典
+summary["總應收"] = summary["桌遊應收"] + summary["電影應收"]
+
+# 6. 輸出完整摘要 (使用 f-string 格式化，金額顯示至小數點後兩位)
+print("HW09 活動報名摘要")
+print(f"活動：{board_name}，每人 {unit_fees[board_name]:.2f} 元")
+print(f"活動：{movie_name}，每人 {unit_fees[movie_name]:.2f} 元")
+print(f"桌遊整理串列：{board_list}")
+print(f"電影整理串列：{movie_list}")
+print(f"桌遊去重名單：{sorted(board_set)}")
+print(f"電影去重名單：{sorted(movie_set)}")
+print(f"桌遊人數：{summary['桌遊人數']} 人")
+print(f"電影人數：{summary['電影人數']} 人")
+print(f"共同參加者：{sorted(both_set)}")
+print(f"共同人數：{summary['共同人數']} 人")
+print(f"只參加桌遊者：{sorted(only_board_set)}")
+print(f"只參加電影者：{sorted(only_movie_set)}")
+print(f"全部參加者：{all_sorted}")
+print(f"總不重複人數：{summary['總不重複人數']} 人")
+print(f"報名人次：{summary['報名人次']} 人次")
+print(f"通知名單前兩位：{preview_list}")
+print(f"桌遊應收：{summary['桌遊應收']:.2f} 元")
+print(f"電影應收：{summary['電影應收']:.2f} 元")
+print(f"總應收：{summary['總應收']:.2f} 元\n")
+
+
+# ==============================================================================
+# 【測試二：新增一位電影參加者】
+# ==============================================================================
+print("==================== 【測試二：新增一位電影參加者】 ====================")
+
+# 1. 原始資料設定 (僅修改 movie_raw)
+activity_names = ("桌遊體驗", "電影欣賞")
+board_raw = " Amy, Ben, amy, Cora "
+movie_raw = " ben, Dora, ERIC, ben, Frank "
+unit_fees = {"桌遊體驗": 120, "電影欣賞": 80}
+
+# 2. 整理文字並拆分為 list
+board_name, movie_name = activity_names
+board_list = board_raw.replace(" ", "").lower().split(",")
+movie_list = movie_raw.replace(" ", "").lower().split(",")
+
+# 3. 轉為 set 進行去重與集合運算
+board_set = set(board_list)
+movie_set = set(movie_list)
+
+both_set = board_set & movie_set
+all_set = board_set | movie_set
+only_board_set = board_set - movie_set
+only_movie_set = movie_set - board_set
+
+# 4. 排序與切片
+all_sorted = sorted(all_set)
+preview_list = all_sorted[:2]
+
+# 5. 計算摘要存入 dict
+summary = {
+    "桌遊人數": len(board_set),
+    "電影人數": len(movie_set),
+    "共同人數": len(both_set),
+    "總不重複人數": len(all_set),
+    "報名人次": len(board_set) + len(movie_set),
+    "桌遊應收": len(board_set) * unit_fees[board_name],
+    "電影應收": len(movie_set) * unit_fees[movie_name],
+}
+summary["總應收"] = summary["桌遊應收"] + summary["電影應收"]
+
+# 6. 輸出完整摘要
+print("HW09 活動報名摘要")
+print(f"活動：{board_name}，每人 {unit_fees[board_name]:.2f} 元")
+print(f"活動：{movie_name}，每人 {unit_fees[movie_name]:.2f} 元")
+print(f"桌遊整理串列：{board_list}")
+print(f"電影整理串列：{movie_list}")
+print(f"桌遊去重名單：{sorted(board_set)}")
+print(f"電影去重名單：{sorted(movie_set)}")
+print(f"桌遊人數：{summary['桌遊人數']} 人")
+print(f"電影人數：{summary['電影人數']} 人")
+print(f"共同參加者：{sorted(both_set)}")
+print(f"共同人數：{summary['共同人數']} 人")
+print(f"只參加桌遊者：{sorted(only_board_set)}")
+print(f"只參加電影者：{sorted(only_movie_set)}")
+print(f"全部參加者：{all_sorted}")
+print(f"總不重複人數：{summary['總不重複人數']} 人")
+print(f"報名人次：{summary['報名人次']} 人次")
+print(f"通知名單前兩位：{preview_list}")
+print(f"桌遊應收：{summary['桌遊應收']:.2f} 元")
+print(f"電影應收：{summary['電影應收']:.2f} 元")
+print(f"總應收：{summary['總應收']:.2f} 元\n")
+
+
+# ==============================================================================
+# 【測試三：兩場去重後完全相同】
+# ==============================================================================
+print("==================== 【測試三：兩場去重後完全相同】 ====================")
+
+# 1. 原始資料設定 (僅修改 movie_raw)
+activity_names = ("桌遊體驗", "電影欣賞")
+board_raw = " Amy, Ben, amy, Cora "
+movie_raw = " AMY, ben, CORA, amy "
+unit_fees = {"桌遊體驗": 120, "電影欣賞": 80}
+
+# 2. 整理文字並拆分為 list
+board_name, movie_name = activity_names
+board_list = board_raw.replace(" ", "").lower().split(",")
+movie_list = movie_raw.replace(" ", "").lower().split(",")
+
+# 3. 轉為 set 進行去重與集合運算
+board_set = set(board_list)
+movie_set = set(movie_list)
+
+both_set = board_set & movie_set
+all_set = board_set | movie_set
+only_board_set = board_set - movie_set
+only_movie_set = movie_set - board_set
+
+# 4. 排序與切片
+all_sorted = sorted(all_set)
+preview_list = all_sorted[:2]
+
+# 5. 計算摘要存入 dict
+summary = {
+    "桌遊人數": len(board_set),
+    "電影人數": len(movie_set),
+    "共同人數": len(both_set),
+    "總不重複人數": len(all_set),
+    "報名人次": len(board_set) + len(movie_set),
+    "桌遊應收": len(board_set) * unit_fees[board_name],
+    "電影應收": len(movie_set) * unit_fees[movie_name],
+}
+summary["總應收"] = summary["桌遊應收"] + summary["電影應收"]
+
+# 6. 輸出完整摘要
+print("HW09 活動報名摘要")
+print(f"活動：{board_name}，每人 {unit_fees[board_name]:.2f} 元")
+print(f"活動：{movie_name}，每人 {unit_fees[movie_name]:.2f} 元")
+print(f"桌遊整理串列：{board_list}")
+print(f"電影整理串列：{movie_list}")
+print(f"桌遊去重名單：{sorted(board_set)}")
+print(f"電影去重名單：{sorted(movie_set)}")
+print(f"桌遊人數：{summary['桌遊人數']} 人")
+print(f"電影人數：{summary['電影人數']} 人")
+print(f"共同參加者：{sorted(both_set)}")
+print(f"共同人數：{summary['共同人數']} 人")
+print(f"只參加桌遊者：{sorted(only_board_set)}")
+print(f"只參加電影者：{sorted(only_movie_set)}")
+print(f"全部參加者：{all_sorted}")
+print(f"總不重複人數：{summary['總不重複人數']} 人")
+print(f"報名人次：{summary['報名人次']} 人次")
+print(f"通知名單前兩位：{preview_list}")
+print(f"桌遊應收：{summary['桌遊應收']:.2f} 元")
+print(f"電影應收：{summary['電影應收']:.2f} 元")
+print(f"總應收：{summary['總應收']:.2f} 元")
